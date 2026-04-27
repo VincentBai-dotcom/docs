@@ -1,0 +1,103 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "tabletop-engine",
+  "theme": "luma",
+  "logo": {
+    "light": "https://media.brand.dev/ee68edc6-bdb0-4295-90c0-15fb7cf71c4d.svg",
+    "dark": "https://media.brand.dev/ee68edc6-bdb0-4295-90c0-15fb7cf71c4d.svg"
+  },
+  "favicon": "https://media.brand.dev/37cc850a-377b-44a6-870a-09ac71e52141.svg",
+  "colors": {
+    "primary": "#0564fc",
+    "light": "#75acfc",
+    "dark": "#ffffff"
+  },
+  "navbar": {
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/VincentBai-dotcom/tabletop-engine"
+    }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "installation"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/game-definition",
+              "concepts/state-facade",
+              "concepts/stages",
+              "concepts/commands",
+              "concepts/visibility"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/building-a-game",
+              "guides/hidden-information",
+              "guides/snapshots-and-replay",
+              "guides/testing"
+            ]
+          },
+          {
+            "group": "CLI",
+            "pages": [
+              "cli/overview",
+              "cli/generate",
+              "cli/validate"
+            ]
+          },
+          {
+            "group": "Protocol",
+            "pages": [
+              "protocol/overview",
+              "protocol/asyncapi",
+              "protocol/client-sdk"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Engine",
+            "pages": [
+              "api/game-definition-builder",
+              "api/game-executor",
+              "api/stage-factory",
+              "api/command-factory"
+            ]
+          },
+          {
+            "group": "State & Schema",
+            "pages": [
+              "api/state-decorators",
+              "api/schema-types",
+              "api/visibility"
+            ]
+          },
+          {
+            "group": "Utilities",
+            "pages": [
+              "api/snapshot",
+              "api/replay",
+              "api/testing-harness"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

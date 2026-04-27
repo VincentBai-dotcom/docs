@@ -1,0 +1,183 @@
+---
+title: "AsyncAPI Document Generation for Games"
+description: "Generate a standards-compliant AsyncAPI 2.x document from your game definition to power documentation, tooling, and payload validation."
+---
+
+`generateAsyncApi` reads your game definition and produces a complete [AsyncAPI 2.6](https://www.asyncapi.com/docs/reference/specification/v2.6.0) document that formally describes every WebSocket message your game server sends and receives. You can serve this document from your API, feed it to AsyncAPI Studio, use it in contract tests, or pass it to any AsyncAPI-compatible code generator.
+
+## Calling `generateAsyncApi`
+
+Import the function from `tabletop-engine` and pass your `GameDefinition` along with an optional options object.
+
+```typescript
+import { generateAsyncApi } from "tabletop-engine";
+import { game } from "./game"; // your GameDefinition
+
+const asyncApiDoc = generateAsyncApi(game, {
+  title: "Splendor Game API",
+  version: "1.0.0",
+});
+```
+
+You can write the result to disk as part of a build step or serve it dynamically on request.
+
+<CodeGroup>
+
+```typescript Write to disk (Bun)
+import { generateAsyncApi } from "tabletop-engine";
+import { game } from "./game";
+
+const doc = generateAsyncApi(game, {
+  title: "Splendor Game API",
+  version: "1.0.0",
+});
+
+await Bun.write("asyncapi.json", JSON.stringify(doc, null, 2));
+```
+
+```typescript Serve dynamically
+import { generateAsyncApi } from "tabletop-engine";
+import { game } from "./game";
+
+const asyncApiDoc = generateAsyncApi(game, {
+  title: "Splendor Game API",
+  version: "1.0.0",
+});
+
+Bun.serve({
+  routes: {
+    "/asyncapi.json": () =>
+      Response.json(asyncApiDoc),
+  },
+});
+```
+
+</CodeGroup>
+
+## `AsyncApiOptions`
+
+All fields are optional. When omitted, `title` falls back to `game.name` and `version` defaults to `"1.0.0"`.
+
+| Option      | Type                            | Description                                                                        |
+| ----------- | ------------------------------- | ---------------------------------------------------------------------------------- |
+| `title`     | `string`                        | Human-readable title written into `info.title`.                                    |
+| `version`   | `string`                        | Semantic version written into `info.version`.                                      |
+| `channels`  | `Partial<AsyncApiChannelNames>` | Override the default channel/message names (e.g. replace `"game_execute"` with a custom string). |
+
+### Customising channel names
+
+By default the engine uses snake-case channel names such as `game_execute` and `game_snapshot`. Pass `channels` to rename any of them.
+
+```typescript
+const doc = generateAsyncApi(game, {
+  channels: {
+    execute: "splendor_execute",
+    gameSnapshot: "splendor_snapshot",
+  },
+});
+```
+
+The `AsyncApiChannelNames` type lists every overridable name:
+
+| Key                    | Default value                  | Direction       |
+| ---------------------- | ------------------------------ | --------------- |
+| `listAvailableCommands`| `game_list_available_commands` | client → server |
+| `availableCommands`    | `game_available_commands`      | server → client |
+| `discover`             | `game_discover`                | client → server |
+| `discoveryResult`      | `game_discovery_result`        | server → client |
+| `execute`              | `game_execute`                 | client → server |
+| `executionResult`      | `game_execution_result`        | server → client |
+| `gameSnapshot`         | `game_snapshot`                | server → client |
+| `gameEnded`            | `game_ended`                   | server → client |
+| `error`                | `error`                        | server → client |
+
+## What the document contains
+
+The generated document has two top-level sections: `channels` and `components`.
+
+### Channels
+
+Each channel maps to one WebSocket message type. Channels the client sends to the server are marked `subscribe`; channels the server sends to the client are marked `publish`.
+
+```json
+{
+  "asyncapi": "2.6.0",
+  "info": { "title": "Splendor Hosted API", "version": "0.1.0" },
+  "channels": {
+    "game_execute": {
+      "subscribe": {
+        "message": { "$ref": "#/components/messages/GameExecute" }
+      }
+    },
+    "game_execution_result": {
+      "publish": {
+        "message": { "$ref": "#/components/messages/GameExecutionResult" }
+      }
+    },
+    "game_snapshot": {
+      "publish": {
+        "message": { "$ref": "#/components/messages/GameSnapshot" }
+      }
+    }
+  }
+}
+```
+
+### Components
+
+The `components.messages` object contains the full payload schema for every channel. The `components.schemas` object contains reusable schemas — `VisibleState`, `CommandPayload`, `DiscoveryPayload`, and more — referenced from the message payloads.
+
+Command payload schemas are derived directly from the `commandSchema` you attach to each command in your game definition, so they stay in sync with your rules code automatically.
+
+```json
+{
+  "components": {
+    "messages": {
+      "GameExecute": {
+        "name": "GameExecute",
+        "payload": {
+          "type": "object",
+          "required": ["type", "requestId", "gameSessionId", "command"],
+          "properties": {
+            "type": { "const": "game_execute", "type": "string" },
+            "requestId": { "type": "string" },
+            "gameSessionId": { "type": "string" },
+            "command": { ... }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "VisibleState": { ... },
+      "CommandPayload": { ... }
+    }
+  }
+}
+```
+
+<Note>
+Discovery commands produce multi-variant `command` and `discovery` schemas as `anyOf` unions. Each step in a discovery flow gets its own variant keyed by `type` and `step` literals, matching the wire format the client SDK sends.
+</Note>
+
+## `AsyncApiDocument` type
+
+If you need to manipulate or validate the document in TypeScript, import the `AsyncApiDocument` type.
+
+```typescript
+import type { AsyncApiDocument } from "tabletop-engine";
+
+function publishSpec(doc: AsyncApiDocument): void {
+  // doc.asyncapi  → "2.6.0"
+  // doc.info      → { title, version }
+  // doc.channels  → Record<string, { publish?, subscribe? }>
+  // doc.components → { messages, schemas }
+}
+```
+
+## Example: Splendor game output
+
+The Splendor reference game ships a committed `asyncapi.json` generated by this function. It shows what the document looks like for a real game with eight commands, multi-step discovery flows, and visibility-aware state projection. You can find it at `examples/splendor/engine/asyncapi.json` in the repository.
+
+<Tip>
+Add `generateAsyncApi` to your CI pipeline and commit the output. Diffing `asyncapi.json` in pull requests gives reviewers an exact picture of protocol changes without reading rule engine internals.
+</Tip>

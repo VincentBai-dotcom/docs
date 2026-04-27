@@ -1,0 +1,130 @@
+{
+  "projectType": "sdk-library",
+  "projectName": "tabletop-engine",
+  "projectDescription": "A transport-agnostic TypeScript runtime library for building board game and tabletop rules engines, with state management, command execution, and protocol generation.",
+  "theme": "luma",
+  "primaryColor": "#0564fc",
+  "lightColor": "#75acfc",
+  "darkColor": "#ffffff",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "installation"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/game-definition",
+              "concepts/state-facade",
+              "concepts/stages",
+              "concepts/commands",
+              "concepts/visibility"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/building-a-game",
+              "guides/hidden-information",
+              "guides/snapshots-and-replay",
+              "guides/testing"
+            ]
+          },
+          {
+            "group": "CLI",
+            "pages": [
+              "cli/overview",
+              "cli/generate",
+              "cli/validate"
+            ]
+          },
+          {
+            "group": "Protocol",
+            "pages": [
+              "protocol/overview",
+              "protocol/asyncapi",
+              "protocol/client-sdk"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Engine",
+            "pages": [
+              "api/game-definition-builder",
+              "api/game-executor",
+              "api/stage-factory",
+              "api/command-factory"
+            ]
+          },
+          {
+            "group": "State & Schema",
+            "pages": [
+              "api/state-decorators",
+              "api/schema-types",
+              "api/visibility"
+            ]
+          },
+          {
+            "group": "Utilities",
+            "pages": [
+              "api/snapshot",
+              "api/replay",
+              "api/testing-harness"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Type-safe game definition builder with fluent API",
+    "Decorator-driven state facade authoring with @State() and @field()",
+    "Three stage types: automatic, single active player, multi active player",
+    "Command validation, execution, availability checking, and discovery",
+    "Hidden information projection with per-viewer visible state",
+    "Deterministic RNG with persisted cursor for reproducible game outcomes",
+    "Snapshot and replay helpers for game state persistence",
+    "Protocol descriptor and AsyncAPI generation for hosted integrations",
+    "Generated TypeScript client SDK for WebSocket-based game servers",
+    "Scenario-style test harness for game logic verification"
+  ],
+  "publicApiSurface": [
+    "GameDefinitionBuilder",
+    "createGameExecutor(game)",
+    "createStageFactory()",
+    "createCommandFactory()",
+    "@State() decorator",
+    "@field(fieldType) decorator",
+    "configureVisibility(target, config)",
+    "t.number() / t.string() / t.boolean() / t.object() / t.array() / t.record() / t.optional() / t.state()",
+    "GameExecutor.createInitialState()",
+    "GameExecutor.executeCommand(state, command)",
+    "GameExecutor.listAvailableCommands(state, options)",
+    "GameExecutor.discoverCommand(state, discovery)",
+    "GameExecutor.getView(state, viewer)",
+    "createSnapshot(state) / restoreSnapshot(snapshot)",
+    "createReplayRecord() / appendReplayStep() / replayRecord()",
+    "runScenario(executor, commands, ...args)",
+    "describeGameProtocol(game)",
+    "generateAsyncApi(game, options)",
+    "describeEngineWebSocketProtocol(game)",
+    "defineConfig(config) (tabletop-engine/config)",
+    "tabletop-cli generate schemas",
+    "tabletop-cli generate protocol",
+    "tabletop-cli generate types",
+    "tabletop-cli generate client-sdk",
+    "tabletop-cli validate"
+  ]
+}

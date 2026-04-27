@@ -1,0 +1,62 @@
+---
+title: "tabletop-engine: TypeScript runtime for board game engines"
+description: "tabletop-engine is a TypeScript library for board game rules engines with typed state facades, stage progression, commands, and WebSocket protocol generation."
+---
+
+tabletop-engine gives you everything you need to build a complete board game or tabletop rules engine in TypeScript. Define your game state with decorators, model turn progression with stages, author commands with validation and execution logic, and generate WebSocket protocol descriptors and AsyncAPI specs — all from a single, cohesive library.
+
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Build your first game in minutes with a step-by-step walkthrough.
+  </Card>
+  <Card title="Installation" icon="box" href="/installation">
+    Add tabletop-engine to your TypeScript project.
+  </Card>
+  <Card title="Core Concepts" icon="lightbulb" href="/concepts/game-definition">
+    Understand game definitions, stages, commands, and state facades.
+  </Card>
+  <Card title="API Reference" icon="code" href="/api/game-definition-builder">
+    Full reference for every class, function, and decorator.
+  </Card>
+</CardGroup>
+
+## What you can build
+
+tabletop-engine handles the runtime mechanics so you can focus on game logic:
+
+- **Turn-based games** with single active players (chess, Splendor, Ticket to Ride)
+- **Simultaneous action games** where multiple players act at the same time
+- **Hidden information games** where each player sees a different view of state
+- **Hosted game servers** with generated WebSocket protocols and AsyncAPI specs
+
+## How it works
+
+<Steps>
+  <Step title="Define your game state">
+    Use `@State()` and `@field()` decorators to describe your game's data model. The engine compiles this into a type-safe canonical schema.
+  </Step>
+  <Step title="Model stages and commands">
+    Build a progression graph using `createStageFactory()`. Each stage defines which commands are available and who can act.
+  </Step>
+  <Step title="Create the executor">
+    Call `createGameExecutor(game)` to get a runtime that handles command validation, execution, state transitions, and event emission.
+  </Step>
+  <Step title="Generate protocol artifacts">
+    Use the CLI (`tabletop-cli generate`) or API to produce protocol descriptors, TypeScript client SDKs, and AsyncAPI specs for your game server.
+  </Step>
+</Steps>
+
+<CardGroup cols={2}>
+  <Card title="Building a Game" icon="gamepad" href="/guides/building-a-game">
+    End-to-end walkthrough using the Splendor reference implementation.
+  </Card>
+  <Card title="Hidden Information" icon="eye-slash" href="/guides/hidden-information">
+    Project different views of state to each player and spectators.
+  </Card>
+  <Card title="CLI Reference" icon="terminal" href="/cli/overview">
+    Generate schemas, types, client SDKs, and AsyncAPI specs from the command line.
+  </Card>
+  <Card title="Protocol & WebSocket" icon="plug" href="/protocol/overview">
+    Connect your game engine to a hosted server with generated WebSocket protocol types.
+  </Card>
+</CardGroup>

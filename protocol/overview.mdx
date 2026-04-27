@@ -1,0 +1,108 @@
+---
+title: "Game Protocol Layer Overview"
+description: "Learn how the tabletop-engine protocol layer bridges your game definition and a hosted WebSocket server with schema-driven descriptors."
+---
+
+The protocol layer in `tabletop-engine` gives you a structured bridge between your game definition and whatever server transport you choose. Rather than locking you into a specific HTTP framework or WebSocket library, the engine exposes three descriptor functions that extract the contracts your game already defines — commands, view schemas, and message channel names — and returns them as plain, serializable objects you can wire into your own infrastructure.
+
+<CardGroup cols={3}>
+  <Card title="AsyncAPI generation" icon="file-json" href="/protocol/asyncapi">
+    Generate a machine-readable AsyncAPI 2.x document describing your game's full WebSocket protocol.
+  </Card>
+  <Card title="Client SDK generation" icon="code" href="/protocol/client-sdk">
+    Use the CLI to generate a fully-typed TypeScript client from your game definition.
+  </Card>
+  <Card title="Engine API reference" icon="book-open" href="/protocol/overview#api-reference">
+    Browse all three descriptor functions and their return types.
+  </Card>
+</CardGroup>
+
+## How the protocol layer fits together
+
+When you define a game with `GameDefinitionBuilder`, you declare commands with typed input schemas and configure which parts of state each player can see. The protocol layer reads that definition at build time and produces descriptors you can use to:
+
+- Validate and document your WebSocket messages
+- Generate a typed TypeScript client for browsers or Node.js apps
+- Feed tooling like AsyncAPI Studio or code generators
+
+The engine itself never opens a socket or starts an HTTP server. You own the transport; the protocol layer gives you the vocabulary.
+
+## API reference
+
+### `describeGameProtocol(game)`
+
+Returns a `GameProtocolDescriptor` that summarises every command your game exposes and the JSON Schema for the visible state that a connected player would receive.
+
+```typescript
+import { describeGameProtocol } from "tabletop-engine";
+
+const protocol = describeGameProtocol(game);
+
+// protocol.name        — the game's name string
+// protocol.commands    — Record<commandId, ProtocolCommandDescriptor>
+// protocol.viewSchema  — TSchema (TypeBox) for the projected visible state
+```
+
+Each entry in `protocol.commands` contains the command's input schema and, for commands with multi-step discovery flows, the full discovery descriptor including all steps, their input schemas, and their output schemas.
+
+<Note>
+Every command in your game definition must have a `commandSchema` attached. `describeGameProtocol` throws a descriptive error at startup if any command is missing its schema so that misconfiguration fails fast rather than at runtime.
+</Note>
+
+### `generateAsyncApi(game, options)`
+
+Builds a complete AsyncAPI 2.x document from your game definition. Pass it to documentation tooling, serve it from a `GET /asyncapi.json` endpoint, or use it to validate message payloads in tests. See [AsyncAPI generation](/protocol/asyncapi) for full usage.
+
+```typescript
+import { generateAsyncApi } from "tabletop-engine";
+
+const doc = generateAsyncApi(game, {
+  title: "My Game API",
+  version: "1.0.0",
+});
+```
+
+### `describeEngineWebSocketProtocol(game, options?)`
+
+Returns an `EngineWebSocketProtocolDescriptor` containing two things:
+
+- **`messages`** — the canonical string names for each WebSocket channel (`game_execute`, `game_snapshot`, etc.), which you can override via `options.channels`
+- **`schemas`** — TypeBox schemas for every request and response message shape
+
+This is the lower-level function that `generateAsyncApi` calls internally. You can use it directly if you want to build custom tooling or generate alternative protocol formats.
+
+```typescript
+import { describeEngineWebSocketProtocol } from "tabletop-engine";
+
+const ws = describeEngineWebSocketProtocol(game);
+
+// ws.messages.execute         → "game_execute"
+// ws.messages.gameSnapshot    → "game_snapshot"
+// ws.schemas.executeRequest   → TypeBox TSchema
+// ws.schemas.gameSnapshotMessage → TypeBox TSchema
+```
+
+## Transport-agnostic design
+
+The engine deliberately does not prescribe how you host your game. You might use `Bun.serve()`, a Node.js WebSocket library, a serverless WebSocket gateway, or something else entirely. The protocol layer hands you the contracts; you decide how to enforce them.
+
+A typical integration looks like this:
+
+<Steps>
+  <Step title="Define your game">
+    Build a `GameDefinition` using `GameDefinitionBuilder` with typed commands and a state facade.
+  </Step>
+  <Step title="Generate the protocol descriptor">
+    Call `describeGameProtocol(game)` or `generateAsyncApi(game, options)` when your server starts. Keep the result in memory — it does not change at runtime.
+  </Step>
+  <Step title="Wire messages to the executor">
+    When a WebSocket message arrives, parse its `type` field against `ws.messages`, then route it to the appropriate `GameExecutor` method.
+  </Step>
+  <Step title="Generate a typed client">
+    Run `tabletop-cli generate client-sdk` to produce a fully-typed TypeScript client your frontend or test suite can import directly. See [Client SDK](/protocol/client-sdk).
+  </Step>
+</Steps>
+
+<Tip>
+Run `describeGameProtocol` during your server's boot sequence and check for any thrown errors before accepting connections. This surfaces schema misconfiguration before any player traffic reaches your server.
+</Tip>

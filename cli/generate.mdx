@@ -1,0 +1,131 @@
+---
+title: "tabletop-cli generate: Schemas, Types, and Client SDK"
+description: "Generate JSON schemas, TypeScript type declarations, a protocol descriptor, and a typed WebSocket client SDK from your tabletop-engine game definition."
+---
+
+The `generate` command reads your game definition via `tabletop.config.ts` and writes one or more output files to your configured output directory. Run it any time you change your game's state shape, add commands, or update visibility configuration. Each target is independent — you can run only the targets your project needs.
+
+## Usage
+
+```bash
+tabletop-cli generate <target> [flags]
+```
+
+## Targets
+
+### `schemas`
+
+Generates `schemas.generated.json` containing JSON Schema definitions for every aspect of your game's data model:
+
+- **`canonicalState`** — the full authoritative state your server stores, combining `game` (your game-specific fields) and `runtime` (engine bookkeeping)
+- **`visibleState`** — the viewer-facing projected state that your server sends to clients
+- **`commands`** — input schemas for every command your game defines
+- **`discoveries`** — multi-step discovery schemas for commands that support them, including each step's input and output shape
+
+```bash
+tabletop-cli generate schemas
+```
+
+Output: `<outDir>/schemas.generated.json`
+
+Use this file to validate server payloads, generate documentation, or drive server-side request validation independently of the TypeScript types.
+
+### `protocol`
+
+Generates `protocol.generated.json` — a machine-readable descriptor of your game's full protocol, including command descriptors and the view schema. This is the raw protocol representation that the other targets build on.
+
+```bash
+tabletop-cli generate protocol
+```
+
+Output: `<outDir>/protocol.generated.json`
+
+Use this file when you need a language-agnostic description of the game protocol, such as feeding an AsyncAPI generator or building tooling that works outside TypeScript.
+
+### `types`
+
+Generates TypeScript declaration files (`.d.ts`) for your game's state shapes:
+
+- **`canonical-state.generated.d.ts`** — exports a `CanonicalState` type representing the full server-side state
+- **`visible-state.generated.d.ts`** — exports a `VisibleState` type representing what a connected client sees
+
+```bash
+tabletop-cli generate types
+```
+
+Output: `<outDir>/canonical-state.generated.d.ts` and `<outDir>/visible-state.generated.d.ts`
+
+Import these types in your server or shared type packages to get compile-time guarantees that your state conforms to the schemas your game defines.
+
+### `client-sdk`
+
+Generates `client-sdk.generated.ts` — a fully typed WebSocket client for your game server. This is the target most frontend and client projects will use.
+
+```bash
+tabletop-cli generate client-sdk
+```
+
+Output: `<outDir>/client-sdk.generated.ts`
+
+The generated file includes:
+
+- **`VisibleState`** — the typed view your client receives on each snapshot
+- **Per-command types** — `<Name>CommandRequest`, `<Name>CommandPayload`, and discovery types for each command
+- **Union types** — `CommandRequest`, `CommandType`, `DiscoveryRequest`, and `DiscoveryResult` across all commands
+- **WebSocket message interfaces** — typed shapes for every message the engine sends and receives (`GameSnapshotMessage`, `GameExecutionResultMessage`, `GameEndedMessage`, etc.)
+- **`createGameEngineClient(socket)`** — a factory that wraps any `WebSocket`-compatible socket and returns a `GameEngineClient` with per-command `execute<Name>` and `discover<Name>` methods
+
+```typescript
+import { createGameEngineClient } from "./generated/client-sdk.generated";
+
+const socket = new WebSocket("wss://your-game-server/ws");
+const client = createGameEngineClient(socket);
+
+// Typed per-command methods — no string literals needed
+const result = await client.executeTakeGem({
+  gameSessionId: "session-123",
+  input: { gemColor: "ruby" },
+});
+
+// Subscribe to game state updates
+client.onGameSnapshot((snapshot) => {
+  renderBoard(snapshot.view);
+});
+```
+
+<Tip>
+  Running `generate client-sdk` is the fastest path to a typed client. The generated `GameEngineClient` handles request IDs, message routing, and promise resolution for you.
+</Tip>
+
+## Running all targets
+
+You can run all four targets in sequence to keep every artifact up to date:
+
+```bash
+tabletop-cli generate schemas
+tabletop-cli generate protocol
+tabletop-cli generate types
+tabletop-cli generate client-sdk
+```
+
+<Tip>
+  Add these commands to your project's build script so generated files stay in sync whenever you change your game definition.
+</Tip>
+
+## Flags
+
+<ParamField path="--config" type="string">
+  Path to a config file. Defaults to `tabletop.config.ts` in the current working directory.
+
+  ```bash
+  tabletop-cli generate client-sdk --config ./config/tabletop.config.ts
+  ```
+</ParamField>
+
+<ParamField path="--outDir" type="string">
+  Override the output directory for generated files. Relative paths resolve from the current working directory, overriding the `outDir` set in your config file.
+
+  ```bash
+  tabletop-cli generate types --outDir ./src/generated
+  ```
+</ParamField>

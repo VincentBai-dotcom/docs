@@ -1,0 +1,236 @@
+---
+title: "Typed Client SDK Generation from Game Protocol"
+description: "Generate a fully-typed TypeScript WebSocket client from your game definition using the tabletop-cli, with command-specific methods and message handlers."
+---
+
+The `tabletop-cli` can generate a fully-typed TypeScript client for your game's WebSocket server. The generated file — `client-sdk.generated.ts` — contains every type your game's protocol uses, plus a `createGameEngineClient` factory that turns any WebSocket-compatible socket into a promise-based client with command-specific execute and discover methods.
+
+## Generating the client
+
+Run the following command from your game's package directory (the CLI reads your game from `tabletop.config.ts`):
+
+```bash
+tabletop-cli generate client-sdk
+```
+
+To override the output directory:
+
+```bash
+tabletop-cli generate client-sdk --outDir ./src/generated
+```
+
+This writes `client-sdk.generated.ts` to the configured output directory. Commit this file alongside your game code and regenerate it whenever your commands or state schema change.
+
+<Note>
+The generated file has no runtime dependencies on `tabletop-engine`. It is plain TypeScript with a single `GameEngineSocketLike` interface that lets you plug in any WebSocket implementation.
+</Note>
+
+## What gets generated
+
+The generated file contains several categories of exports, all derived directly from your game definition.
+
+### State type
+
+```typescript
+// Reflects your game's state facade with visibility rules applied
+export type VisibleState = {
+  game: { /* your projected state fields */ };
+  progression: {
+    current: string | null;
+    rootId: string | null;
+    segments: Record<string, ProgressionSegment>;
+  };
+};
+```
+
+### Command types
+
+For each command `my_command` in your game, the generator produces:
+
+```typescript
+// Full request shape including actorId
+export type MyCommandCommandRequest = {
+  type: "my_command";
+  actorId: string;
+  input: { /* your command's input schema */ };
+};
+
+// Payload without actorId — what the client method accepts
+export type MyCommandCommandPayload = Omit<MyCommandCommandRequest, "actorId">;
+
+// Union of all command requests
+export type CommandRequest = MyCommandCommandRequest | OtherCommandRequest;
+
+// Literal union of all command type strings
+export type CommandType = "my_command" | "other_command";
+```
+
+### Discovery types
+
+Commands that declare a multi-step discovery flow get additional types:
+
+```typescript
+export type MyCommandDiscoveryRequest = {
+  type: "my_command";
+  actorId: string;
+  step: "select_item";
+  input: { /* step input schema */ };
+};
+
+export type MyCommandDiscoveryResult =
+  | { complete: false; step: "select_item"; options: Array<{ id: string; output: ...; nextStep: ...; nextInput: ... }> }
+  | { complete: true; input: { /* final command input */ } };
+
+// Zero-argument start helper if the first step has no required fields
+export const myCommandDiscoveryStart = {
+  step: "select_item",
+  input: {},
+} satisfies MyCommandDiscoveryStart;
+```
+
+### WebSocket message interfaces
+
+```typescript
+export interface GameSnapshotMessage {
+  type: "game_snapshot";
+  gameSessionId: string;
+  stateVersion: number;
+  view: VisibleState;
+  availableCommands: CommandType[];
+  events: unknown[];
+}
+
+export type GameExecutionResultMessage =
+  | { type: "game_execution_result"; requestId: string; gameSessionId: string; accepted: true; stateVersion: number; events: unknown[] }
+  | { type: "game_execution_result"; requestId: string; gameSessionId: string; accepted: false; stateVersion: number; reason: string; metadata?: unknown; events: unknown[] };
+
+export interface GameEndedMessage {
+  type: "game_ended";
+  gameSessionId: string;
+  result: { reason: "completed" | "invalidated"; winnerPlayerIds?: string[]; message?: string };
+}
+
+export interface GameEngineErrorMessage {
+  type: "error";
+  requestId?: string;
+  code: string;
+  message?: string;
+}
+```
+
+## `GameEngineSocketLike` interface
+
+The client does not depend on any particular WebSocket library. You pass any object that satisfies `GameEngineSocketLike`:
+
+```typescript
+export interface GameEngineSocketLike {
+  send(data: string): void;
+  addEventListener(type: "message", listener: (event: { data: unknown }) => void): void;
+  addEventListener(type: "close" | "error", listener: () => void): void;
+  removeEventListener(type: "message", listener: (event: { data: unknown }) => void): void;
+  removeEventListener(type: "close" | "error", listener: () => void): void;
+}
+```
+
+The browser's built-in `WebSocket` satisfies this interface without any adapter. For Node.js you can use the `ws` package or Bun's built-in `WebSocket`.
+
+## Using the generated client
+
+### Browser or Bun
+
+```typescript
+import { createGameEngineClient } from "./generated/client-sdk.generated";
+
+const socket = new WebSocket("wss://game.example.com/ws");
+const client = createGameEngineClient(socket);
+
+// Receive game state pushes from the server
+client.onGameSnapshot((msg) => {
+  console.log("State version:", msg.stateVersion);
+  console.log("Visible state:", msg.view);
+  console.log("Available commands:", msg.availableCommands);
+});
+
+// Execute a command — returns a promise that resolves with the execution result
+const result = await client.executeMyCommand({
+  gameSessionId: "session-abc",
+  input: { cardId: "emerald-1" },
+});
+
+if (result.accepted) {
+  console.log("Command accepted, new version:", result.stateVersion);
+} else {
+  console.warn("Command rejected:", result.reason);
+}
+
+// Clean up listeners and reject pending requests
+client.dispose();
+```
+
+### Multi-step discovery
+
+For commands with discovery flows, the client exposes a `discoverXxx` method alongside `executeXxx`:
+
+```typescript
+// Start a discovery flow
+const discovery = await client.discoverMyCommand({
+  gameSessionId: "session-abc",
+  step: "select_item",
+  input: {},
+});
+
+if (discovery.result && !discovery.result.result.complete) {
+  // Show options to the player
+  const options = discovery.result.result.options;
+  // ...
+}
+```
+
+## `GameEngineClient` interface
+
+The full interface generated into the file:
+
+| Method | Description |
+| --- | --- |
+| `listAvailableCommands(request)` | Ask the server which commands are currently valid. Returns `GameAvailableCommandsMessage`. |
+| `discover(request)` | Run a raw discovery request. Prefer the generated `discoverXxx` helpers. |
+| `execute(request)` | Send a raw command execution. Prefer the generated `executeXxx` helpers. |
+| `discoverXxx(request)` | Per-command typed discovery helper — one method per discoverable command. |
+| `executeXxx(request)` | Per-command typed execute helper — one method per command. |
+| `onGameSnapshot(handler)` | Subscribe to server-pushed state snapshots. Returns an unsubscribe function. |
+| `onGameEnded(handler)` | Subscribe to the game-ended message. Returns an unsubscribe function. |
+| `onDiscoveryResult(handler)` | Subscribe to all discovery result messages. Returns an unsubscribe function. |
+| `onExecutionResult(handler)` | Subscribe to all execution result messages. Returns an unsubscribe function. |
+| `onMessage(handler)` | Subscribe to every incoming server message. Returns an unsubscribe function. |
+| `dispose()` | Remove all event listeners and reject any pending requests. |
+
+<Tip>
+All `onXxx` subscription methods return an unsubscribe function. Store the return value and call it when your component or view unmounts to avoid memory leaks:
+
+```typescript
+const unsubscribe = client.onGameSnapshot(handleSnapshot);
+// later:
+unsubscribe();
+```
+</Tip>
+
+## `GameEngineClientOptions`
+
+Pass an optional second argument to `createGameEngineClient` to customise request ID generation:
+
+```typescript
+const client = createGameEngineClient(socket, {
+  createRequestId: () => crypto.randomUUID(),
+});
+```
+
+By default the client uses `crypto.randomUUID()` when available and falls back to an incrementing counter string.
+
+## Keeping the SDK in sync
+
+Regenerate `client-sdk.generated.ts` every time you add, rename, or change a command or its schema. A simple way to enforce this is to add a generation step to your build script and fail CI if the committed file differs from the freshly generated output.
+
+```bash
+tabletop-cli generate client-sdk
+git diff --exit-code src/generated/client-sdk.generated.ts
+```
