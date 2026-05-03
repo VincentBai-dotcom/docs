@@ -37,8 +37,8 @@ function field(fieldType: FieldType): PropertyDecorator
 `@field()` is a property decorator that registers a field's schema against the enclosing `@State()` class. Only properties annotated with `@field()` appear in the canonical schema — any unannotated property is transient and is never persisted.
 
 <ParamField path="fieldType" type="FieldType" required>
-  A field type descriptor created by the `t` schema builder. See [Schema
-  Types](/api/schema-types) for the full list of available builders.
+  A field type descriptor created by the `t` schema builder. See [State schema
+  types](/reference/core-types/state-schema-types) for the full list of available builders.
 </ParamField>
 
 Use the `!` definite-assignment assertion on properties that the engine will hydrate rather than initialize from a literal:

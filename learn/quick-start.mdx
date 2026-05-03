@@ -6,16 +6,16 @@ description: "tabletop-engine is a transport-agnostic TypeScript library for bui
 tabletop-engine is a TypeScript runtime library that gives you the building blocks for a complete board game or tabletop rules engine. You define your game state with decorators, model turn structure with stages, author commands with validation and execution logic, and generate WebSocket protocol descriptors — all without committing to a specific transport, framework, or hosting platform.
 
 <CardGroup cols={2}>
-  <Card title="Quickstart" icon="rocket" href="/quickstart">
+  <Card title="Quick start" icon="rocket" href="/learn/quick-start/build-your-first-game">
     Build a minimal working game in under five minutes.
   </Card>
-  <Card title="Installation" icon="box" href="/installation">
+  <Card title="Installation" icon="box" href="/learn/quick-start/installation">
     Add tabletop-engine to your TypeScript project.
   </Card>
-  <Card title="Core Concepts" icon="lightbulb" href="/concepts/game-definition">
+  <Card title="Build your game" icon="lightbulb" href="/learn/build-your-game/assemble-the-game-definition">
     Learn how game definitions, stages, commands, and state facades fit together.
   </Card>
-  <Card title="API Reference" icon="code" href="/api/game-definition-builder">
+  <Card title="Reference" icon="code" href="/reference/authoring-apis/create-game-definition-builder">
     Full reference for every class, function, and decorator.
   </Card>
 </CardGroup>
@@ -56,5 +56,5 @@ tabletop-engine is designed for TypeScript developers building the backend logic
 The library deliberately stays transport-agnostic and has no opinions about auth, lobbies, persistence, or hosting. You bring those layers; tabletop-engine handles the game rules.
 
 <Note>
-  tabletop-engine requires TypeScript 5+ and uses the `experimentalDecorators` compiler option for state facade authoring. See [Installation](/installation) for the required `tsconfig.json` settings.
+  tabletop-engine requires TypeScript 5+ and uses the `experimentalDecorators` compiler option for state facade authoring. See [Installation](/learn/quick-start/installation) for the required `tsconfig.json` settings.
 </Note>

@@ -84,7 +84,7 @@ const nextResult = executor.executeCommand(restored, nextCommand);
 
 - **Persistence between server restarts** — snapshot state after each command and reload it on startup.
 - **Checkpointing** — store a snapshot at the start of each round so you can roll back to a known-good state during debugging.
-- **Replay construction** — snapshots serve as the `initialSnapshot` field in `ReplayRecord`. See [Replay](/api/replay) for details.
+- **Replay construction** — snapshots serve as the `initialSnapshot` field in `ReplayRecord`. See [Replay helpers](/reference/testing-apis/replay-helpers) for details.
 - **Testing** — snapshot a complex hand-crafted state to reuse it across multiple test cases without re-running setup.
 
 <Tip>

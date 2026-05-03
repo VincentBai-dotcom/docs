@@ -21,79 +21,105 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Documentation",
+        "tab": "Learn",
         "groups": [
           {
-            "group": "Get Started",
+            "group": "Quick start",
             "pages": [
-              "introduction",
-              "quickstart",
-              "installation"
+              "learn/quick-start",
+              "learn/quick-start/installation",
+              "learn/quick-start/build-your-first-game"
             ]
           },
           {
-            "group": "Core Concepts",
+            "group": "Build your game",
             "pages": [
-              "concepts/game-definition",
-              "concepts/state-facade",
-              "concepts/stages",
-              "concepts/commands",
-              "concepts/visibility"
+              "learn/build-your-game/define-your-game-state",
+              "learn/build-your-game/define-your-commands",
+              "learn/build-your-game/define-your-stages",
+              "learn/build-your-game/assemble-the-game-definition",
+              "learn/build-your-game/add-game-rules-and-validation",
+              "learn/build-your-game/model-hidden-information",
+              "learn/build-your-game/return-sanitized-views-to-players",
+              "learn/build-your-game/test-commands",
+              "learn/build-your-game/test-stage-transitions",
+              "learn/build-your-game/test-full-game-flows",
+              "learn/build-your-game/test-hidden-information-behavior",
+              "learn/build-your-game/reproduce-bugs-with-snapshots-and-replay"
             ]
           },
           {
-            "group": "Guides",
+            "group": "Connect the engine",
             "pages": [
-              "guides/building-a-game",
-              "guides/hidden-information",
-              "guides/snapshots-and-replay",
-              "guides/testing"
-            ]
-          },
-          {
-            "group": "CLI",
-            "pages": [
-              "cli/overview",
-              "cli/generate",
-              "cli/validate"
-            ]
-          },
-          {
-            "group": "Protocol",
-            "pages": [
-              "protocol/overview",
-              "protocol/asyncapi",
-              "protocol/client-sdk"
+              "learn/connect-the-engine/generate-protocol-artifacts",
+              "learn/connect-the-engine/use-the-client-sdk",
+              "learn/connect-the-engine/connect-a-frontend",
+              "learn/connect-the-engine/connect-a-server-transport",
+              "learn/connect-the-engine/keep-clients-in-sync"
             ]
           }
         ]
       },
       {
-        "tab": "API Reference",
+        "tab": "Reference",
         "groups": [
           {
-            "group": "Engine",
+            "group": "Core types",
             "pages": [
-              "api/game-definition-builder",
-              "api/game-executor",
-              "api/stage-factory",
-              "api/command-factory"
+              "reference/core-types/game-definition",
+              "reference/core-types/state-schema-types",
+              "reference/core-types/state-decorators",
+              "reference/core-types/visibility-types",
+              "reference/core-types/snapshot-types",
+              "reference/core-types/replay-types"
             ]
           },
           {
-            "group": "State & Schema",
+            "group": "Authoring APIs",
             "pages": [
-              "api/state-decorators",
-              "api/schema-types",
-              "api/visibility"
+              "reference/authoring-apis/create-game-definition-builder",
+              "reference/authoring-apis/create-command-factory",
+              "reference/authoring-apis/create-stage-factory",
+              "reference/authoring-apis/configure-visibility",
+              "reference/authoring-apis/define-config"
             ]
           },
           {
-            "group": "Utilities",
+            "group": "Runtime APIs",
             "pages": [
-              "api/snapshot",
-              "api/replay",
-              "api/testing-harness"
+              "reference/runtime-apis/create-game-executor",
+              "reference/runtime-apis/execution-result",
+              "reference/runtime-apis/game-events",
+              "reference/runtime-apis/command-discovery",
+              "reference/runtime-apis/stage-progression"
+            ]
+          },
+          {
+            "group": "Testing APIs",
+            "pages": [
+              "reference/testing-apis/run-scenario",
+              "reference/testing-apis/snapshot-helpers",
+              "reference/testing-apis/replay-helpers"
+            ]
+          },
+          {
+            "group": "CLI",
+            "pages": [
+              "reference/cli/overview",
+              "reference/cli/generate",
+              "reference/cli/validate",
+              "reference/cli/configuration",
+              "reference/cli/flags"
+            ]
+          },
+          {
+            "group": "Protocol",
+            "pages": [
+              "reference/protocol/overview",
+              "reference/protocol/asyncapi-generation",
+              "reference/protocol/client-sdk-generation",
+              "reference/protocol/transport-contract",
+              "reference/protocol/sync-model"
             ]
           }
         ]

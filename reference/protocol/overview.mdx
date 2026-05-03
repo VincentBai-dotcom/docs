@@ -6,13 +6,13 @@ description: "Learn how the tabletop-engine protocol layer bridges your game def
 The protocol layer in `tabletop-engine` gives you a structured bridge between your game definition and whatever server transport you choose. Rather than locking you into a specific HTTP framework or WebSocket library, the engine exposes three descriptor functions that extract the contracts your game already defines — commands, view schemas, and message channel names — and returns them as plain, serializable objects you can wire into your own infrastructure.
 
 <CardGroup cols={3}>
-  <Card title="AsyncAPI generation" icon="file-json" href="/protocol/asyncapi">
+  <Card title="AsyncAPI generation" icon="file-json" href="/reference/protocol/asyncapi-generation">
     Generate a machine-readable AsyncAPI 2.x document describing your game's full WebSocket protocol.
   </Card>
-  <Card title="Client SDK generation" icon="code" href="/protocol/client-sdk">
+  <Card title="Client SDK generation" icon="code" href="/reference/protocol/client-sdk-generation">
     Use the CLI to generate a fully-typed TypeScript client from your game definition.
   </Card>
-  <Card title="Engine API reference" icon="book-open" href="/protocol/overview#api-reference">
+  <Card title="Engine API reference" icon="book-open" href="/reference/protocol/overview#api-reference">
     Browse all three descriptor functions and their return types.
   </Card>
 </CardGroup>
@@ -51,7 +51,7 @@ Every command in your game definition must have a `commandSchema` attached. `des
 
 ### `generateAsyncApi(game, options)`
 
-Builds a complete AsyncAPI 2.x document from your game definition. Pass it to documentation tooling, serve it from a `GET /asyncapi.json` endpoint, or use it to validate message payloads in tests. See [AsyncAPI generation](/protocol/asyncapi) for full usage.
+Builds a complete AsyncAPI 2.x document from your game definition. Pass it to documentation tooling, serve it from a `GET /asyncapi.json` endpoint, or use it to validate message payloads in tests. See [AsyncAPI generation](/reference/protocol/asyncapi-generation) for full usage.
 
 ```typescript
 import { generateAsyncApi } from "tabletop-engine";
@@ -99,7 +99,7 @@ A typical integration looks like this:
     When a WebSocket message arrives, parse its `type` field against `ws.messages`, then route it to the appropriate `GameExecutor` method.
   </Step>
   <Step title="Generate a typed client">
-    Run `tabletop-cli generate client-sdk` to produce a fully-typed TypeScript client your frontend or test suite can import directly. See [Client SDK](/protocol/client-sdk).
+    Run `tabletop-cli generate client-sdk` to produce a fully-typed TypeScript client your frontend or test suite can import directly. See [Client SDK](/reference/protocol/client-sdk-generation).
   </Step>
 </Steps>
 
