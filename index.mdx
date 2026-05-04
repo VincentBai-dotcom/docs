@@ -7,12 +7,12 @@ mode: "custom"
 {/* Hero */}
 <div className="relative overflow-hidden">
   <div className="max-w-5xl mx-auto px-6 pt-20 pb-16 lg:pt-32 lg:pb-24 text-center">
-    <h1 className="text-5xl lg:text-7xl font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
+    <h1 className="text-5xl lg:text-7xl font-semibold tracking-tight text-[#111110] dark:text-[#f0f0ee]">
       The runtime for
       <br />
-      <span className="text-[#0564fc] dark:text-[#75acfc]">board game rules engines.</span>
+      <span className="text-[#d47c3a] dark:text-[#e8893f]">board game rules engines.</span>
     </h1>
-    <p className="mt-8 text-lg lg:text-xl text-gray-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+    <p className="mt-8 text-lg lg:text-xl text-stone-600 dark:text-stone-400 max-w-2xl mx-auto leading-relaxed">
       Express your game's state, commands, and turn flow as plain TypeScript.
       tabletop-engine handles validation, execution, hidden information, and
       protocol generation — so you can ship the rules, not the plumbing.
@@ -20,19 +20,19 @@ mode: "custom"
     <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
       <a
         href="/learn/quick-start/what-is-tabletop-engine"
-        className="inline-flex items-center justify-center px-6 py-3 rounded-full text-base font-medium bg-[#0564fc] text-white hover:bg-[#0454d8] transition-colors no-underline"
+        className="inline-flex items-center justify-center px-6 py-3 rounded-full text-base font-medium bg-[#d47c3a] text-white hover:bg-[#b86a30] transition-colors no-underline"
       >
         Get started
       </a>
       <a
         href="/reference/authoring-apis/create-game-definition-builder"
-        className="inline-flex items-center justify-center px-6 py-3 rounded-full text-base font-medium bg-gray-100 dark:bg-zinc-800 text-gray-900 dark:text-zinc-100 hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors no-underline"
+        className="inline-flex items-center justify-center px-6 py-3 rounded-full text-base font-medium bg-stone-100 dark:bg-stone-800 text-[#111110] dark:text-[#f0f0ee] hover:bg-stone-200 dark:hover:bg-stone-700 transition-colors no-underline"
       >
         API reference
       </a>
       <a
         href="https://github.com/VincentBai-dotcom/tabletop-engine"
-        className="inline-flex items-center justify-center px-6 py-3 rounded-full text-base font-medium text-gray-700 dark:text-zinc-300 hover:text-gray-900 dark:hover:text-zinc-100 transition-colors no-underline"
+        className="inline-flex items-center justify-center px-6 py-3 rounded-full text-base font-medium text-stone-700 dark:text-stone-300 hover:text-[#111110] dark:hover:text-[#f0f0ee] transition-colors no-underline"
       >
         View on GitHub →
       </a>
@@ -41,14 +41,14 @@ mode: "custom"
 </div>
 
 {/* Feature 1 — state */}
-<div className="border-t border-gray-200 dark:border-zinc-800">
+<div className="border-t border-stone-200 dark:border-stone-800">
   <div className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
       <div>
-        <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
+        <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight text-[#111110] dark:text-[#f0f0ee]">
           Model state with decorators.
         </h2>
-        <p className="mt-6 text-lg text-gray-600 dark:text-zinc-400 leading-relaxed">
+        <p className="mt-6 text-lg text-stone-600 dark:text-stone-400 leading-relaxed">
           Describe your game's data model with `@State()` and `@field()`. The
           engine compiles a type-safe canonical schema, hydrates a working
           facade for execution, and projects per-player views for hidden
@@ -56,7 +56,7 @@ mode: "custom"
         </p>
         <a
           href="/learn/build-your-game/define-your-game-state"
-          className="mt-6 inline-block text-[#0564fc] dark:text-[#75acfc] font-medium hover:underline"
+          className="mt-6 inline-block text-[#d47c3a] dark:text-[#e8893f] font-medium hover:underline"
         >
           Learn about state →
         </a>
@@ -84,14 +84,14 @@ class GameState {
 </div>
 
 {/* Feature 2 — commands */}
-<div className="border-t border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900/40">
+<div className="border-t border-stone-200 dark:border-stone-800 bg-[#f0f0ee]/40 dark:bg-stone-900/40">
   <div className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
       <div className="lg:order-2">
-        <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
+        <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight text-[#111110] dark:text-[#f0f0ee]">
           Author commands with validate and execute.
         </h2>
-        <p className="mt-6 text-lg text-gray-600 dark:text-zinc-400 leading-relaxed">
+        <p className="mt-6 text-lg text-stone-600 dark:text-stone-400 leading-relaxed">
           Every player action is a command with a `validate` step and an
           `execute` step. The engine runs them transactionally, surfaces
           structured errors, and emits semantic events you can stream to
@@ -99,7 +99,7 @@ class GameState {
         </p>
         <a
           href="/learn/build-your-game/define-your-commands"
-          className="mt-6 inline-block text-[#0564fc] dark:text-[#75acfc] font-medium hover:underline"
+          className="mt-6 inline-block text-[#d47c3a] dark:text-[#e8893f] font-medium hover:underline"
         >
           Learn about commands →
         </a>
@@ -128,14 +128,14 @@ const buyCard = {
 </div>
 
 {/* Feature 3 — executor */}
-<div className="border-t border-gray-200 dark:border-zinc-800">
+<div className="border-t border-stone-200 dark:border-stone-800">
   <div className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
       <div>
-        <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
+        <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight text-[#111110] dark:text-[#f0f0ee]">
           One executor. Every transport.
         </h2>
-        <p className="mt-6 text-lg text-gray-600 dark:text-zinc-400 leading-relaxed">
+        <p className="mt-6 text-lg text-stone-600 dark:text-stone-400 leading-relaxed">
           `createGameExecutor` gives you a single runtime that handles command
           dispatch, stage progression, deterministic RNG, snapshots, and
           replay. Drop it behind a WebSocket server, a queue, or run it
@@ -143,7 +143,7 @@ const buyCard = {
         </p>
         <a
           href="/reference/runtime-apis/create-game-executor"
-          className="mt-6 inline-block text-[#0564fc] dark:text-[#75acfc] font-medium hover:underline"
+          className="mt-6 inline-block text-[#d47c3a] dark:text-[#e8893f] font-medium hover:underline"
         >
           Executor reference →
         </a>
@@ -168,21 +168,21 @@ result.view("p2");   // sanitized view for player 2
 </div>
 
 {/* Feature 4 — protocol generation */}
-<div className="border-t border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900/40">
+<div className="border-t border-stone-200 dark:border-stone-800 bg-[#f0f0ee]/40 dark:bg-stone-900/40">
   <div className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
       <div className="lg:order-2">
-        <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
+        <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight text-[#111110] dark:text-[#f0f0ee]">
           Ship a protocol, not a contract drift bug.
         </h2>
-        <p className="mt-6 text-lg text-gray-600 dark:text-zinc-400 leading-relaxed">
+        <p className="mt-6 text-lg text-stone-600 dark:text-stone-400 leading-relaxed">
           Generate AsyncAPI specs, protocol descriptors, and a typed client
           SDK directly from your game definition. Your server, your client,
           and your docs stay in sync — by construction.
         </p>
         <a
           href="/reference/cli/overview"
-          className="mt-6 inline-block text-[#0564fc] dark:text-[#75acfc] font-medium hover:underline"
+          className="mt-6 inline-block text-[#d47c3a] dark:text-[#e8893f] font-medium hover:underline"
         >
           CLI reference →
         </a>
@@ -204,13 +204,13 @@ $ tabletop-cli generate --asyncapi
 </div>
 
 {/* What you get */}
-<div className="border-t border-gray-200 dark:border-zinc-800">
+<div className="border-t border-stone-200 dark:border-stone-800">
   <div className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
     <div className="text-center mb-14">
-      <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
+      <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight text-[#111110] dark:text-[#f0f0ee]">
         Built for real games.
       </h2>
-      <p className="mt-4 text-lg text-gray-600 dark:text-zinc-400 max-w-2xl mx-auto">
+      <p className="mt-4 text-lg text-stone-600 dark:text-stone-400 max-w-2xl mx-auto">
         Everything you need to model rules end-to-end — from the first turn to
         the production deploy.
       </p>
@@ -245,25 +245,25 @@ $ tabletop-cli generate --asyncapi
 </div>
 
 {/* Final CTA */}
-<div className="border-t border-gray-200 dark:border-zinc-800">
+<div className="border-t border-stone-200 dark:border-stone-800">
   <div className="max-w-3xl mx-auto px-6 py-24 lg:py-32 text-center">
-    <h2 className="text-4xl lg:text-5xl font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
+    <h2 className="text-4xl lg:text-5xl font-semibold tracking-tight text-[#111110] dark:text-[#f0f0ee]">
       Build your next game.
     </h2>
-    <p className="mt-6 text-lg text-gray-600 dark:text-zinc-400">
+    <p className="mt-6 text-lg text-stone-600 dark:text-stone-400">
       Install the package, define a state, write a command, and run it. The
       first end-to-end game takes about ten minutes.
     </p>
     <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
       <a
         href="/learn/quick-start/installation"
-        className="inline-flex items-center justify-center px-6 py-3 rounded-full text-base font-medium bg-[#0564fc] text-white hover:bg-[#0454d8] transition-colors no-underline"
+        className="inline-flex items-center justify-center px-6 py-3 rounded-full text-base font-medium bg-[#d47c3a] text-white hover:bg-[#b86a30] transition-colors no-underline"
       >
         Install tabletop-engine
       </a>
       <a
         href="/learn/quick-start/build-your-first-game"
-        className="inline-flex items-center justify-center px-6 py-3 rounded-full text-base font-medium bg-gray-100 dark:bg-zinc-800 text-gray-900 dark:text-zinc-100 hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors no-underline"
+        className="inline-flex items-center justify-center px-6 py-3 rounded-full text-base font-medium bg-stone-100 dark:bg-stone-800 text-[#111110] dark:text-[#f0f0ee] hover:bg-stone-200 dark:hover:bg-stone-700 transition-colors no-underline"
       >
         Build your first game
       </a>

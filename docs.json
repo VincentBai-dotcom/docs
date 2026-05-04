@@ -3,14 +3,20 @@
   "name": "tabletop-engine",
   "theme": "aspen",
   "logo": {
-    "light": "https://media.brand.dev/ee68edc6-bdb0-4295-90c0-15fb7cf71c4d.svg",
-    "dark": "https://media.brand.dev/ee68edc6-bdb0-4295-90c0-15fb7cf71c4d.svg"
+    "light": "/logo/lockup-light.svg",
+    "dark": "/logo/lockup-dark.svg"
   },
-  "favicon": "https://media.brand.dev/37cc850a-377b-44a6-870a-09ac71e52141.svg",
+  "favicon": "/logo/favicon.svg",
   "colors": {
-    "primary": "#0564fc",
-    "light": "#75acfc",
-    "dark": "#ffffff"
+    "primary": "#d47c3a",
+    "light": "#e8893f",
+    "dark": "#d47c3a"
+  },
+  "background": {
+    "color": {
+      "light": "#fafaf8",
+      "dark": "#111110"
+    }
   },
   "navbar": {
     "primary": {
