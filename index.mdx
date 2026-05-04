@@ -1,62 +1,272 @@
 ---
-title: "tabletop-engine: TypeScript runtime for board game engines"
-description: "tabletop-engine is a TypeScript library for board game rules engines with typed state facades, stage progression, commands, and WebSocket protocol generation."
+title: "tabletop-engine"
+description: "The runtime for board game rules engines."
+mode: "custom"
 ---
 
-tabletop-engine gives you everything you need to build a complete board game or tabletop rules engine in TypeScript. Define your game state with decorators, model turn progression with stages, author commands with validation and execution logic, and generate WebSocket protocol descriptors and AsyncAPI specs — all from a single, cohesive library.
+{/* Hero */}
+<div className="relative overflow-hidden">
+  <div className="max-w-5xl mx-auto px-6 pt-20 pb-16 lg:pt-32 lg:pb-24 text-center">
+    <h1 className="text-5xl lg:text-7xl font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
+      The runtime for
+      <br />
+      <span className="text-[#0564fc] dark:text-[#75acfc]">board game rules engines.</span>
+    </h1>
+    <p className="mt-8 text-lg lg:text-xl text-gray-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+      Express your game's state, commands, and turn flow as plain TypeScript.
+      tabletop-engine handles validation, execution, hidden information, and
+      protocol generation — so you can ship the rules, not the plumbing.
+    </p>
+    <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+      <a
+        href="/learn/quick-start/what-is-tabletop-engine"
+        className="inline-flex items-center justify-center px-6 py-3 rounded-full text-base font-medium bg-[#0564fc] text-white hover:bg-[#0454d8] transition-colors no-underline"
+      >
+        Get started
+      </a>
+      <a
+        href="/reference/authoring-apis/create-game-definition-builder"
+        className="inline-flex items-center justify-center px-6 py-3 rounded-full text-base font-medium bg-gray-100 dark:bg-zinc-800 text-gray-900 dark:text-zinc-100 hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors no-underline"
+      >
+        API reference
+      </a>
+      <a
+        href="https://github.com/VincentBai-dotcom/tabletop-engine"
+        className="inline-flex items-center justify-center px-6 py-3 rounded-full text-base font-medium text-gray-700 dark:text-zinc-300 hover:text-gray-900 dark:hover:text-zinc-100 transition-colors no-underline"
+      >
+        View on GitHub →
+      </a>
+    </div>
+  </div>
+</div>
 
-<CardGroup cols={2}>
-  <Card title="Quick start" icon="rocket" href="/learn/quick-start">
-    Build your first game in minutes with a step-by-step walkthrough.
-  </Card>
-  <Card title="Installation" icon="box" href="/learn/quick-start/installation">
-    Add tabletop-engine to your TypeScript project.
-  </Card>
-  <Card title="Build your game" icon="lightbulb" href="/learn/build-your-game/assemble-the-game-definition">
-    Understand game definitions, stages, commands, and state facades.
-  </Card>
-  <Card title="Reference" icon="code" href="/reference/authoring-apis/create-game-definition-builder">
-    Full reference for every class, function, and decorator.
-  </Card>
-</CardGroup>
+{/* Feature 1 — state */}
+<div className="border-t border-gray-200 dark:border-zinc-800">
+  <div className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div>
+        <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
+          Model state with decorators.
+        </h2>
+        <p className="mt-6 text-lg text-gray-600 dark:text-zinc-400 leading-relaxed">
+          Describe your game's data model with `@State()` and `@field()`. The
+          engine compiles a type-safe canonical schema, hydrates a working
+          facade for execution, and projects per-player views for hidden
+          information — all from one declaration.
+        </p>
+        <a
+          href="/learn/build-your-game/define-your-game-state"
+          className="mt-6 inline-block text-[#0564fc] dark:text-[#75acfc] font-medium hover:underline"
+        >
+          Learn about state →
+        </a>
+      </div>
+      <div>
+```ts
+@State()
+class GameState {
+  @field(t.array(t.string()))
+  playerOrder: string[] = [];
 
-## What you can build
+  @field(t.state(() => BoardState))
+  board!: BoardState;
 
-tabletop-engine handles the runtime mechanics so you can focus on game logic:
+  getNextPlayer(playerId: string): string {
+    const index = this.playerOrder.indexOf(playerId);
+    if (index === -1) throw new Error(`unknown_player:${playerId}`);
+    return this.playerOrder[(index + 1) % this.playerOrder.length]!;
+  }
+}
+```
+      </div>
+    </div>
+  </div>
+</div>
 
-- **Turn-based games** with single active players (chess, Splendor, Ticket to Ride)
-- **Simultaneous action games** where multiple players act at the same time
-- **Hidden information games** where each player sees a different view of state
-- **Hosted game servers** with generated WebSocket protocols and AsyncAPI specs
+{/* Feature 2 — commands */}
+<div className="border-t border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900/40">
+  <div className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div className="lg:order-2">
+        <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
+          Author commands with validate and execute.
+        </h2>
+        <p className="mt-6 text-lg text-gray-600 dark:text-zinc-400 leading-relaxed">
+          Every player action is a command with a `validate` step and an
+          `execute` step. The engine runs them transactionally, surfaces
+          structured errors, and emits semantic events you can stream to
+          clients.
+        </p>
+        <a
+          href="/learn/build-your-game/define-your-commands"
+          className="mt-6 inline-block text-[#0564fc] dark:text-[#75acfc] font-medium hover:underline"
+        >
+          Learn about commands →
+        </a>
+      </div>
+      <div className="lg:order-1">
+```ts
+const buyCard = {
+  commandId: "buy-card",
+  validate: ({ game, payload }) => {
+    const card = game.market.find(c => c.id === payload.cardId);
+    if (!card) return { ok: false, reason: "card-not-in-market" };
+    if (!canAfford(game.activeSeat, card)) {
+      return { ok: false, reason: "insufficient-tokens" };
+    }
+    return { ok: true };
+  },
+  execute: ({ game, payload }) => {
+    game.activeSeat.purchase(payload.cardId);
+    game.endTurn();
+  },
+};
+```
+      </div>
+    </div>
+  </div>
+</div>
 
-## How it works
+{/* Feature 3 — executor */}
+<div className="border-t border-gray-200 dark:border-zinc-800">
+  <div className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div>
+        <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
+          One executor. Every transport.
+        </h2>
+        <p className="mt-6 text-lg text-gray-600 dark:text-zinc-400 leading-relaxed">
+          `createGameExecutor` gives you a single runtime that handles command
+          dispatch, stage progression, deterministic RNG, snapshots, and
+          replay. Drop it behind a WebSocket server, a queue, or run it
+          in-process for tests.
+        </p>
+        <a
+          href="/reference/runtime-apis/create-game-executor"
+          className="mt-6 inline-block text-[#0564fc] dark:text-[#75acfc] font-medium hover:underline"
+        >
+          Executor reference →
+        </a>
+      </div>
+      <div>
+```ts
+const executor = createGameExecutor(game);
 
-<Steps>
-  <Step title="Define your game state">
-    Use `@State()` and `@field()` decorators to describe your game's data model. The engine compiles this into a type-safe canonical schema.
-  </Step>
-  <Step title="Model stages and commands">
-    Build a progression graph using `createStageFactory()`. Each stage defines which commands are available and who can act.
-  </Step>
-  <Step title="Create the executor">
-    Call `createGameExecutor(game)` to get a runtime that handles command validation, execution, state transitions, and event emission.
-  </Step>
-  <Step title="Generate protocol artifacts">
-    Use the CLI (`tabletop-cli generate`) or API to produce protocol descriptors, TypeScript client SDKs, and AsyncAPI specs for your game server.
-  </Step>
-</Steps>
+const result = executor.execute({
+  commandId: "buy-card",
+  actor: "player-1",
+  payload: { cardId: "emerald-2" },
+});
 
-<CardGroup cols={2}>
-  <Card title="Build your first game" icon="gamepad" href="/learn/quick-start/build-your-first-game">
-    Follow a small end-to-end tutorial before diving into the full authoring workflow.
-  </Card>
-  <Card title="Hidden information" icon="eye-slash" href="/learn/build-your-game/model-hidden-information">
-    Project different views of state to each player and spectators.
-  </Card>
-  <Card title="CLI reference" icon="terminal" href="/reference/cli/overview">
-    Generate schemas, types, client SDKs, and AsyncAPI specs from the command line.
-  </Card>
-  <Card title="Protocol" icon="plug" href="/reference/protocol/overview">
-    Connect your game engine to a hosted server with generated WebSocket protocol types.
-  </Card>
-</CardGroup>
+result.events;       // semantic events for clients
+result.state;        // next canonical state
+result.view("p2");   // sanitized view for player 2
+```
+      </div>
+    </div>
+  </div>
+</div>
+
+{/* Feature 4 — protocol generation */}
+<div className="border-t border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900/40">
+  <div className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div className="lg:order-2">
+        <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
+          Ship a protocol, not a contract drift bug.
+        </h2>
+        <p className="mt-6 text-lg text-gray-600 dark:text-zinc-400 leading-relaxed">
+          Generate AsyncAPI specs, protocol descriptors, and a typed client
+          SDK directly from your game definition. Your server, your client,
+          and your docs stay in sync — by construction.
+        </p>
+        <a
+          href="/reference/cli/overview"
+          className="mt-6 inline-block text-[#0564fc] dark:text-[#75acfc] font-medium hover:underline"
+        >
+          CLI reference →
+        </a>
+      </div>
+      <div className="lg:order-1">
+```bash
+$ tabletop-cli generate --asyncapi
+
+✓ Loaded game definition: splendor
+✓ Generated protocol descriptor
+✓ Generated AsyncAPI 3.0 spec
+✓ Generated TypeScript client SDK
+
+3 files written to ./generated
+```
+      </div>
+    </div>
+  </div>
+</div>
+
+{/* What you get */}
+<div className="border-t border-gray-200 dark:border-zinc-800">
+  <div className="max-w-6xl mx-auto px-6 py-20 lg:py-28">
+    <div className="text-center mb-14">
+      <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
+        Built for real games.
+      </h2>
+      <p className="mt-4 text-lg text-gray-600 dark:text-zinc-400 max-w-2xl mx-auto">
+        Everything you need to model rules end-to-end — from the first turn to
+        the production deploy.
+      </p>
+    </div>
+    <Columns cols={3}>
+      <Card title="Hidden information" icon="eye-slash" href="/learn/build-your-game/model-hidden-information">
+        Project a different view of state to each player. The engine sanitizes
+        canonical state into per-seat views automatically.
+      </Card>
+      <Card title="Stage progression" icon="diagram-project" href="/learn/build-your-game/define-your-stages">
+        Model setup, draft, action, and scoring phases as a progression graph.
+        The engine handles transitions and lifecycle resolution.
+      </Card>
+      <Card title="Deterministic RNG" icon="dice" href="/reference/core-types/state-schema-types">
+        Seeded, replayable randomness baked into the runtime — shuffle decks
+        and roll dice without breaking determinism.
+      </Card>
+      <Card title="Snapshots & replay" icon="clock-rotate-left" href="/learn/build-your-game/reproduce-bugs-with-snapshots-and-replay">
+        Capture any state, replay any sequence of commands. Reproduce bugs
+        from production logs in a single line.
+      </Card>
+      <Card title="Scenario testing" icon="flask" href="/learn/build-your-game/test-full-game-flows">
+        A test harness designed for game logic. Drive games through full flows
+        with concise, declarative scenarios.
+      </Card>
+      <Card title="Transport-agnostic" icon="plug" href="/learn/connect-the-engine/connect-a-server-transport">
+        Run the executor in-process, behind a WebSocket, or over a queue. The
+        engine doesn't care how messages arrive.
+      </Card>
+    </Columns>
+  </div>
+</div>
+
+{/* Final CTA */}
+<div className="border-t border-gray-200 dark:border-zinc-800">
+  <div className="max-w-3xl mx-auto px-6 py-24 lg:py-32 text-center">
+    <h2 className="text-4xl lg:text-5xl font-semibold tracking-tight text-gray-900 dark:text-zinc-50">
+      Build your next game.
+    </h2>
+    <p className="mt-6 text-lg text-gray-600 dark:text-zinc-400">
+      Install the package, define a state, write a command, and run it. The
+      first end-to-end game takes about ten minutes.
+    </p>
+    <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+      <a
+        href="/learn/quick-start/installation"
+        className="inline-flex items-center justify-center px-6 py-3 rounded-full text-base font-medium bg-[#0564fc] text-white hover:bg-[#0454d8] transition-colors no-underline"
+      >
+        Install tabletop-engine
+      </a>
+      <a
+        href="/learn/quick-start/build-your-first-game"
+        className="inline-flex items-center justify-center px-6 py-3 rounded-full text-base font-medium bg-gray-100 dark:bg-zinc-800 text-gray-900 dark:text-zinc-100 hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors no-underline"
+      >
+        Build your first game
+      </a>
+    </div>
+  </div>
+</div>
