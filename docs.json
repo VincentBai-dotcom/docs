@@ -26,7 +26,7 @@
           {
             "group": "Quick start",
             "pages": [
-              "learn/quick-start",
+              "learn/quick-start/what-is-tabletop-engine",
               "learn/quick-start/installation",
               "learn/quick-start/build-your-first-game"
             ]
