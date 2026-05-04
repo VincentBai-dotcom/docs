@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "name": "tabletop-engine",
-  "theme": "maple",
+  "theme": "aspen",
   "logo": {
     "light": "https://media.brand.dev/ee68edc6-bdb0-4295-90c0-15fb7cf71c4d.svg",
     "dark": "https://media.brand.dev/ee68edc6-bdb0-4295-90c0-15fb7cf71c4d.svg"
