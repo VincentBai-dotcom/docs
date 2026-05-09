@@ -156,16 +156,20 @@ const buyCard = defineGameCommand({
       <div>
 ```ts
 const executor = createGameExecutor(game);
+const initial = executor.createInitialState("seed_1");
 
-const result = executor.execute({
-  commandId: "buy-card",
-  actor: "player-1",
-  payload: { cardId: "emerald-2" },
+const result = executor.executeCommand(initial, {
+  type: "buy_card",
+  actorId: "player_1",
+  input: { cardId: 42 },
 });
 
-result.events;       // semantic events for clients
-result.state;        // next canonical state
-result.view("p2");   // sanitized view for player 2
+if (result.ok) {
+  result.state;   // next canonical state
+  result.events;  // semantic events to stream
+}
+
+executor.getView(result.state, "player_2"); // per-viewer sanitized state
 ```
       </div>
     </div>
@@ -194,14 +198,11 @@ result.view("p2");   // sanitized view for player 2
       </div>
       <div className="lg:order-1">
 ```bash
-$ tabletop-cli generate --asyncapi
+$ tabletop-cli generate protocol
+generated protocol:./generated/protocol.generated.json
 
-✓ Loaded game definition: splendor
-✓ Generated protocol descriptor
-✓ Generated AsyncAPI 3.0 spec
-✓ Generated TypeScript client SDK
-
-3 files written to ./generated
+$ tabletop-cli generate client-sdk
+generated client-sdk:./generated/client.generated.ts
 ```
       </div>
     </div>
