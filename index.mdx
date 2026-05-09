@@ -108,21 +108,24 @@ class GameState {
       </div>
       <div className="lg:order-1">
 ```ts
-const buyCard = {
-  commandId: "buy-card",
-  validate: ({ game, payload }) => {
-    const card = game.market.find(c => c.id === payload.cardId);
-    if (!card) return { ok: false, reason: "card-not-in-market" };
-    if (!canAfford(game.activeSeat, card)) {
-      return { ok: false, reason: "insufficient-tokens" };
+const defineGameCommand = createCommandFactory<GameState>();
+
+const buyCard = defineGameCommand({
+  commandId: "buy_card",
+  commandSchema: t.object({ cardId: t.number() }),
+})
+  .validate(({ game, command }) => {
+    const card = game.getCard(command.input.cardId);
+    if (!card) return { ok: false, reason: "unknown_card" };
+    if (!game.canAfford(command.actorId, card)) {
+      return { ok: false, reason: "insufficient_funds" };
     }
     return { ok: true };
-  },
-  execute: ({ game, payload }) => {
-    game.activeSeat.purchase(payload.cardId);
-    game.endTurn();
-  },
-};
+  })
+  .execute(({ game, command }) => {
+    game.buyCard(command.actorId, command.input.cardId);
+  })
+  .build();
 ```
       </div>
     </div>
